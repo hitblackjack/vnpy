@@ -198,10 +198,12 @@ class AtrRsiStrategy(CtaTemplate):
                 # 使用RSI指标的趋势行情时，会在超买超卖区钝化特征，作为开仓信号
                 if self.rsiValue > self.rsiBuy:
                     # 这里为了保证成交，选择超价5个整指数点下单
-                    self.buy(bar.close+5, 1)
+                    orderID = self.buy(bar.close+5, 1)
+                    self.orderList.append(orderID)
 
                 elif self.rsiValue < self.rsiSell:
-                    self.short(bar.close-5, 1)
+                    orderID = self.short(bar.close-5, 1)
+                    self.orderList.append(orderID)
 
         # 持有多头仓位
         elif self.pos > 0:
@@ -211,7 +213,7 @@ class AtrRsiStrategy(CtaTemplate):
             # 计算多头移动止损
             longStop = self.intraTradeHigh * (1-self.trailingPercent/100)
             # 发出本地止损委托，并且把委托号记录下来，用于后续撤单
-            orderID = self.sell(longStop, 1, stop=True)
+            orderID = self.sell(longStop, self.pos, stop=True)
             self.orderList.append(orderID)
 
         # 持有空头仓位
@@ -220,7 +222,7 @@ class AtrRsiStrategy(CtaTemplate):
             self.intraTradeHigh = bar.high
 
             shortStop = self.intraTradeLow * (1+self.trailingPercent/100)
-            orderID = self.cover(shortStop, 1, stop=True)
+            orderID = self.cover(shortStop, -self.pos, stop=True)
             self.orderList.append(orderID)
 
         # 发出状态更新事件
@@ -249,7 +251,8 @@ if __name__ == '__main__':
     engine.setBacktestingMode(engine.BAR_MODE)
 
     # 设置回测用的数据起始日期
-    engine.setStartDate('20120101')
+    #engine.setStartDate('20120101')
+    engine.setStartDate('20110201')
     
     # 设置产品相关参数
     engine.setSlippage(0.2)     # 股指1跳
