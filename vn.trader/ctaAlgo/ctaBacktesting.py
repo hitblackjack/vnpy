@@ -558,6 +558,11 @@ class BacktestingEngine(object):
         totalCommission = 0     # 总手续费
         totalSlippage = 0       # 总滑点
         
+        winningResult = 0       # 盈利交易数量
+        losingResult = 0        # 亏损交易数量
+        totalWinning = 0        # 总盈利金额
+        totalLosing = 0         # 总损失金额
+        
         timeList = []           # 时间序列
         pnlList = []            # 每笔盈亏序列
         capitalList = []        # 盈亏汇总的时间序列
